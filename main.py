@@ -16,6 +16,8 @@ bot = telebot.TeleBot(token)
 users = UsersBD()
 api_requests = APIRequests()
 
+users.check_if_table_exists()
+
 # init keyboards
 list_of_classes_available = [str(i) for i in range(8, 11 + 1)]
 class_list_keyboard = telebot.types.ReplyKeyboardMarkup(True)

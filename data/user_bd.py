@@ -6,6 +6,19 @@ class UsersBD:
         self.con = sqlite3.connect("bd\\users.db", check_same_thread=False)
         self.cur = self.con.cursor()
     
+    def check_if_table_exists(self):
+        # for heroku. i guess it deletes bd every time
+        try:
+            result = self.cur.execute(f"""SELECT Clas FROM users_table'""").fetchone()
+        except Exception:
+            self.cur.execute(f"""CREATE TABLE users_table (
+                    Nickname     VARCHAR (255),
+                    Clas         VARCHAR (8),
+                    SendMEssages BOOL,
+                    chat_id      INTEGER (64) 
+                );
+                """)
+    
     def add_user(self, nickname, clas, chat_id=''):  # chat_id might be not defined for the tests
         if self.check_user_in_bd(nickname):
             self.cur.execute(f'''UPDATE users_table SET clas = '{clas}', chat_id={chat_id}
