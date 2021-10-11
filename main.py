@@ -9,7 +9,6 @@ from threading import Thread
 from time import sleep
 import time
 from multiprocessing.context import Process
-import schedule
 
 
 # main variables
