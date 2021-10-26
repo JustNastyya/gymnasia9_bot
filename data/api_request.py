@@ -43,16 +43,16 @@ class APIRequestsLibrary:
     def __init__(self):
         self.path_to_server = path_to_api_server
         path = self.path_to_server + '/library/literature_categories'
-        self.literature_categories = supposed_to_be_from_api.list_of_categories  # requests.get(path).json()
+        self.literature_categories = requests.get(path).json()
 
     def match_books_request(self, request):
         path = self.path_to_server + f'/library/match_books/{request}'
-        matched_books = supposed_to_be_from_api.match_books_request_answer  # requests.get(path).json()
+        matched_books = requests.get(path).json()
         return matched_books  # {clas: [book1, book2..], clas2: [book3, book4...]..}
 
     def get_books_in_category(self, category):
         path = self.path_to_server + f'/library/books_in_category/{category}'
-        books = supposed_to_be_from_api.books_in_category_answer  # requests.get(path).json()
+        books = requests.get(path).json()
         return books  # {clas: [book1, book2..], clas2: [book3, book4...]..}
 
     def get_list_of_categories(self):

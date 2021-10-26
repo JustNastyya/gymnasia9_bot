@@ -42,7 +42,10 @@ settings_keyboard.row(
 )
 
 list_of_book_categories_keyboard = telebot.types.ReplyKeyboardMarkup(True)
-list_of_book_categories_keyboard.row(*api_requests_library.get_list_of_categories())
+list_of_categories = api_requests_library.get_list_of_categories()
+for i in range(5, len(list_of_categories), 5):  # every row must have only 5 categories
+    list_of_book_categories_keyboard.row(*list_of_categories[i - 5: i])
+list_of_book_categories_keyboard.row(*list_of_categories[-(len(list_of_categories) % 5):])
 
 keyboard_stop_searching_for_book = telebot.types.ReplyKeyboardMarkup(True)
 keyboard_stop_searching_for_book.row('Прекратить поиск')
@@ -207,10 +210,10 @@ def commands(message):
 
     elif msg == '/schedule_for_today':
         send_schedule_for_today(message)
-
+        
     elif msg == '/book_search':
         ask_for_book(message)
-        
+
     elif msg == '/books_in_category':
         ask_for_books_in_category(message)
 
