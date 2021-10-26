@@ -143,15 +143,16 @@ def start_message(message):
 
 @bot.message_handler(commands=list_of_commands)
 def commands(message):
-    if message == '/settings':
+    msg = message.text.lower()
+    if msg == '/settings':
         send_list_of_settings(message)
-    elif message == '/schedule_for_tomorrow':
+    elif msg == '/schedule_for_tomorrow':
         send_schedule_for_tomorrow(message)
-    elif message == '/schedule_for_today':
+    elif msg == '/schedule_for_today':
         send_schedule_for_today(message)
-    elif message == '/book_search':
+    elif msg == '/book_search':
         pass
-    elif message == '/books_in_category':
+    elif msg == '/books_in_category':
         pass
 
 
