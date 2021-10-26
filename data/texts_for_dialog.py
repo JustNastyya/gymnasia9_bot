@@ -31,3 +31,12 @@ def good_looking_schedule(schedule):
         for key in schedule.keys()
         ])
     return res
+
+
+def nice_books_found_string(books_matched):
+    # {clas: [book1, book2..], clas2: [book3, book4...]..}
+    res = '\n\n'.join([
+        f'{str(key)} класс: \n' + '\n'.join(['\t\t\t\t' + book for book in books_matched[key]])
+        for key in sorted(list(books_matched.keys()))
+    ])
+    return '\n' + res

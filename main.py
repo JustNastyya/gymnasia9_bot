@@ -41,6 +41,12 @@ settings_keyboard.row(
     'обратно'
 )
 
+list_of_book_categories_keyboard = telebot.types.ReplyKeyboardMarkup(True)
+list_of_book_categories_keyboard.row(*api_requests_library.get_list_of_categories())
+
+keyboard_stop_searching_for_book = telebot.types.ReplyKeyboardMarkup(True)
+keyboard_stop_searching_for_book.row('Прекратить поиск')
+
 # variable for next step handlers
 isRunning = False
 number = ''
@@ -86,6 +92,54 @@ def ask_letter(message):
         msg = bot.send_message(message.chat.id, hello_reply_if_not_reg,
                         reply_markup=class_list_keyboard)
         bot.register_next_step_handler(msg, ask_clas)
+
+
+def ask_for_book(message):
+    global isRunning
+    msg = bot.send_message(message.chat.id,
+                    'Хорошо, введите название книги и я поищу ее в библиотеке',
+                    reply_markup=keyboard_stop_searching_for_book)
+    bot.register_next_step_handler(msg, ask_for_book_catcher)
+    isRunning = True
+
+
+def ask_for_book_catcher(message):
+    global isRunning
+    if message.text.lower() == 'прекратить поиск':
+        isRunning = False
+        bot.send_message(message.chat.id, 'Окей, продолжаем', reply_markup=main_keyboard)
+        return
+    books_matched = api_requests_library.match_books_request(message.text.lower())
+    if len(books_matched) == 0:
+        bot.send_message(message.chat.id,
+                        'Книги с таким названием нет в библиотеке',
+                        reply_markup=keyboard_stop_searching_for_book)
+    else:
+        isRunning = False
+        msg = 'Вот такие книги были найдены по запросу:' + nice_books_found_string(books_matched)
+        bot.send_message(message.chat.id, msg, reply_markup=main_keyboard)
+
+
+def ask_for_books_in_category(message):
+    global isRunning
+    msg = bot.send_message(message.chat.id,
+                    'Введите категорию и я покажу список книг',
+                    reply_markup=list_of_book_categories_keyboard)
+    bot.register_next_step_handler(msg, ask_for_books_in_category_catcher)
+    isRunning = True
+
+
+def ask_for_books_in_category_catcher(message):
+    global isRunning
+    if message.text.lower() in api_requests_library.get_list_of_categories():
+        isRunning = False
+        books_matched = api_requests_library.get_books_in_category(message.text.lower())
+        msg = 'Вот такие книги были найдены по запросу:' + nice_books_found_string(books_matched)
+        bot.send_message(message.chat.id, msg, reply_markup=main_keyboard)
+    else:
+        bot.send_message(message.chat.id,
+                        'Такой категории у меня в списке нет',
+                        reply_markup=list_of_book_categories_keyboard)
 
 
 # send schedule
@@ -144,16 +198,21 @@ def start_message(message):
 @bot.message_handler(commands=list_of_commands)
 def commands(message):
     msg = message.text.lower()
+
     if msg == '/settings':
         send_list_of_settings(message)
+
     elif msg == '/schedule_for_tomorrow':
         send_schedule_for_tomorrow(message)
+
     elif msg == '/schedule_for_today':
         send_schedule_for_today(message)
+
     elif msg == '/book_search':
-        pass
+        ask_for_book(message)
+        
     elif msg == '/books_in_category':
-        pass
+        ask_for_books_in_category(message)
 
 
 @bot.message_handler(content_types=['text'])
@@ -170,7 +229,7 @@ def send_text(message):  # if users message is a text
         send_schedule_for_tomorrow(message)
 
     elif msg == 'найти книгу':
-        pass
+        ask_for_book(message)
 
     elif msg == 'включить/выключить рассылку рассписания':
         put_on_off_notifications(message)
