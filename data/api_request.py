@@ -4,7 +4,7 @@ from data.consts import days_of_the_week
 from data.config import path_to_api_server
 
 
-class APIRequests:
+class APIRequestsSchedule:
     def __init__(self):
         self.path_to_server = path_to_api_server
 
@@ -36,3 +36,23 @@ class APIRequests:
         path = self.path_to_server + f"/schedule/{clas}&{day}"
         data = requests.get(path).json()
         return data
+
+
+class APIRequestsLibrary:
+    def __init__(self):
+        self.path_to_server = path_to_api_server
+        path = self.path_to_server + '/library/literature_categories'
+        self.literature_categories = requests.get(path).json()
+
+    def match_books_request(self, request):
+        path = self.path_to_server + f'/library/match_books/{request}'
+        matched_books = requests.get(path).json()
+        return matched_books  # {book1: clas, book2:clas...}
+
+    def get_books_in_category(self, category, in_stock):
+        path = self.path_to_server + f'/library/books_in_category/{category}&in_stock={in_stock}'
+        books = requests.get(path).json()
+        return books  # {book1: clas, book2:clas...}
+
+    def get_list_of_categories(self):
+        return self.literature_categories
