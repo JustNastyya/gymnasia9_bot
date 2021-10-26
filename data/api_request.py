@@ -1,17 +1,16 @@
 import requests
-from data.data_which_is_actually_from_api import *
 import datetime
 from data.consts import days_of_the_week
+from data.config import path_to_api_server
 
 
 class APIRequests:
     def __init__(self):
-        self.path_to_server = ''
+        self.path_to_server = path_to_api_server
 
     def get_list_of_classes(self):
-        path = self.path_to_server + f"//classes_in_paralel"
-        # return requests.get(path).json()
-        return amount_of_letters_in_each_paralel
+        path = self.path_to_server + f"/classes_in_paralel"
+        return requests.get(path).json()
     
     def _get_day(self):
         return datetime.datetime.today().weekday()
@@ -22,14 +21,9 @@ class APIRequests:
             return "Сегодня выходной"
 
         day = days_of_the_week[day]
-        path = self.path_to_server + f"/schedule/{clas}/{day}"
-        data = {'result': f'рассписание типа на {day}'}  # requests.get(path).json()
-        """
-        data = {
-            'result': {'08:00 - 08:40': 'История', ...}
-        }
-        """
-        return data['result']
+        path = self.path_to_server + f"/schedule/{clas}&{day}"
+        data = requests.get(path).json()
+        return data
 
     def get_schedule_for_tomorrow(self, clas):
         day = self._get_day() + 1
@@ -39,11 +33,6 @@ class APIRequests:
             return "Завтра выходной"
 
         day = days_of_the_week[day]
-        path = self.path_to_server + f"/schedule/{clas}/{day}"
-        data = {'result': f'рассписание типа на {day}'}  # requests.get(path).json()
-        """
-        data = {
-            'result': {'08:00 - 08:40': 'История', ...}
-        }
-        """
-        return data['result']
+        path = self.path_to_server + f"/schedule/{clas}&{day}"
+        data = requests.get(path).json()
+        return data

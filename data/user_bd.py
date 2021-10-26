@@ -9,7 +9,7 @@ class UsersBD:
     def check_if_table_exists(self):
         # for heroku. i guess it deletes bd every time
         try:
-            result = self.cur.execute(f"""SELECT Clas FROM users_table'""").fetchone()
+            result = self.cur.execute(f"""SELECT Clas FROM users_table""").fetchone()
         except Exception:
             self.cur.execute(f"""CREATE TABLE users_table (
                     Nickname     VARCHAR (255),
